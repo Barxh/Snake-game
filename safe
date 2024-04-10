@@ -1,0 +1,95 @@
+
+from turtle import *
+from zmija import Zmija
+from hrana import Hrana
+from rezultat import Rezultat
+import time
+
+
+def cao():
+    ekran.bye()
+def crvena():
+    for i in range(0,len(niz),1):
+        niz[i].color("red")
+def zuta():
+    for i in range(0,len(niz),1):
+        niz[i].color("yellow")
+
+ekran = Screen()
+ekran.setup(width=650, height=700)
+ekran.bgcolor("black")
+ekran.title("Zmijica")
+ekran.tracer(0)
+t=Turtle()
+t.penup()
+t.goto(-293,293)
+t.pendown()
+t.pencolor("white")
+t.pensize(5)
+t.hideturtle()
+for i in range(0,4,1):
+    if i%2==0:
+        t.goto(t.xcor()*-1,t.ycor())
+    else:
+        t.goto(t.xcor() , t.ycor()* -1)
+
+zmija = Zmija()
+zmija.prepreka()
+hrana = Hrana()
+rezultat = Rezultat()
+ekran.listen()
+ekran.onkey(zmija.levo, "Left")
+ekran.onkey(zmija.desno, "Right")
+flag = True
+r = 0
+t = 0.3
+niz=[]
+for i in range(0, 9, 1):
+    niz.append(Turtle("square"))
+    niz[i].penup()
+    niz[i].ht()
+    niz[i].goto(80 - 20 * i, 320)
+    niz[i].color("white")
+while flag:
+    ekran.update()
+    time.sleep(t)
+
+    zmija.kretanje()
+    zmija.nowalls()
+    print(zmija.telo[0].pos())
+    if zmija.telo[0].distance(hrana.hrana) < 15:
+        r += 1
+        t -= 0.0033
+        if r % 5 == 4:
+            hrana.velika()
+
+
+            for i in range(0,9,1):
+                niz[i].color("white")
+                niz[i].st()
+                ekran.ontimer(niz[i].ht, (i+1)*1000)
+            ekran.ontimer(zuta,3*1000)
+            ekran.ontimer(crvena, 6*1000)
+            ekran.ontimer(hrana.premesti,9)
+        else:
+            hrana.premesti()
+        if r % 5 == 0:
+            zmija.produzi()
+            t -= 0.0033
+        zmija.produzi()
+        rezultat.clear()
+        rezultat.prikaz()
+    for i in range(1, len(zmija.telo) - 1, 1):
+        if zmija.telo[0].distance(zmija.telo[i]) < 10:
+            flag = False
+            rezultat.udaracRep()
+    for i in range(0,2,1):
+        if zmija.telo[0].distance(zmija.prepreke[i]) < 30:
+            zmija.telo[0].hd()
+            flag = False
+            rezultat.udaracRep()
+
+
+ekran.onkey(cao,"Escape")
+while (True):
+    ekran.update()
